@@ -1,5 +1,15 @@
 import requests
-import  json
+import datetime
+
+
+
+
+year =datetime.datetime.now().year
+month = datetime.datetime.now().month
+day = datetime.datetime.now().day
+
+print(year,month,day)
+
 user = '05166115'
 pwd = '166115'
 
@@ -33,10 +43,11 @@ def getbookinfo(session):
     r = requests.get(url_get_book_information)
     r = dict(eval(r.text))
 
+    bookinfos =[]
 
     for i in r['Detail']:
         try:
-            print(i.keys())
+            #print(i.keys())
             bookinfo={'Title':i['Title'],
                       'state':i['State'],
                       'Date':i['Date'],
@@ -44,12 +55,40 @@ def getbookinfo(session):
                       'canrenew':i['CanRenew'],
                       'department_id':i['Department_id'],
                       'department':i['Department']}
-            print(bookinfo)
-            
+            #print(bookinfo)
+            bookinfos.append(bookinfo)
+
         except Exception as e:
             print(e)
             #exit(0)
 
+    return  bookinfos
+
+
+def calculatetime(time):
+    pass
+
+
+
+def send_email():
+    pass
+
+
+def renewal(bookinfos):
+    if(bookinfos is not None):
+     for i in bookinfos:
+        print(i)
+        if(i['state']=='超过期限'):
+            send_email()
+
+        elif(calculatetime(i['Date'])): #如果快过期了
+            if(i['canrenew']==0):  #如果不能续借了
+                send_email()
+            else:                 #自动续借
+                pass
+
+
 if __name__ == '__main__':
     session = getsession(user,pwd)
-    getbookinfo(session)
+    bookinfos = getbookinfo(session)
+    renewal(bookinfos)

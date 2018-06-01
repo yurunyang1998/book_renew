@@ -1,6 +1,8 @@
+#coding=utf-8
 import requests
 import datetime
-
+import smtplib
+from email.mime.text import MIMEText
 
 
 
@@ -69,9 +71,35 @@ def calculatetime(time):
     pass
 
 
+def send_email(msg_address,sub,cont):
 
-def send_email():
-    pass
+    """
+    这是一个发送邮件的函数
+    :param msg_address: 表示目的地址
+    :param sub: 表示主题，如图书过期提醒，图书已续订
+    :param cont: 表示内容，哪本书啥时候过期，是否续订
+    :return:
+    """
+
+    msg_from='674860268@qq.com'                                 #发送方邮箱
+    passwd='fiupxsfhxbxkbfdc'                                   #填入发送方邮箱的授权码
+    msg_to=msg_address                                  #收件人邮箱
+
+    subject="图书过期提醒"                                     #主题
+    content="这是我使用python smtplib及email模块发送的邮件"      #正文
+    msg = MIMEText(content)
+    msg['Subject'] = subject
+    msg['From'] = msg_from
+    msg['To'] = msg_to
+    try:
+        s = smtplib.SMTP_SSL("smtp.qq.com",465)          #邮件服务器及端口号
+        s.login(msg_from, passwd)
+        s.sendmail(msg_from, msg_to, msg.as_string())
+        print("发送成功")
+    except Exception as e:
+        print("发送失败")
+    finally:
+        s.quit()
 
 
 def renewal(bookinfos):
@@ -89,6 +117,7 @@ def renewal(bookinfos):
 
 
 if __name__ == '__main__':
-    session = getsession(user,pwd)
-    bookinfos = getbookinfo(session)
-    renewal(bookinfos)
+    # session = getsession(user,pwd)
+    # bookinfos = getbookinfo(session)
+    # renewal(bookinfos)
+    send_email()

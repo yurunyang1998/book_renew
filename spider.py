@@ -6,14 +6,9 @@ from email.mime.text import MIMEText
 
 
 
-year =datetime.datetime.now().year
-month = datetime.datetime.now().month
-day = datetime.datetime.now().day
 
-print(year,month,day)
 
-user = '05166115'
-pwd = '166115'
+
 
 
 def getsession(user,pwd):
@@ -56,7 +51,8 @@ def getbookinfo(session):
                       'Library_id':i['Library_id'],
                       'canrenew':i['CanRenew'],
                       'department_id':i['Department_id'],
-                      'department':i['Department']}
+                      'department':i['Department'],
+                      'barcode':i['Barcode']}
             #print(bookinfo)
             bookinfos.append(bookinfo)
 
@@ -68,10 +64,29 @@ def getbookinfo(session):
 
 
 def calculatetime(time):
-    pass
+    '''
+    计算是不是快过期了
+    :param time:
+    :return:
+    '''
+    now_year = datetime.datetime.now().year
+    now_month = datetime.datetime.now().month
+    now_day = datetime.datetime.now().day
+
+    year=int(time[:4])
+    month = int(time[4:6])
+    day = int(time[6:8])
+
+    if(year-now_year>=1):
+        return False
+    if(month-now_month>=1):
+        return False
+    if(day-now_day<=30):
+        return True
+    else:return False
 
 
-def send_email(msg_address,sub,cont):
+def send_email(msg_address,send_info):
 
     """
     这是一个发送邮件的函数
@@ -86,7 +101,26 @@ def send_email(msg_address,sub,cont):
     msg_to=msg_address                                  #收件人邮箱
 
     subject="图书过期提醒"                                     #主题
-    content="这是我使用python smtplib及email模块发送的邮件"      #正文
+    content=send_info['has_renew']      #正文
+
+
+    hasrenew = '这几本书已经续借:  '+'\n'
+    for i in send_info['has_renew']:
+        hasrenew = hasrenew+"           "+i+'\n'
+
+    #if(send_info['overtime'] is not None):
+    overtime = '这几本书已经过期：'+'\n'
+    for i in send_info['overtime']:
+        overtime=overtime+i+"           "+'\n'
+
+    cannotrenew="这几本书已无法续借并将于一下日期过期 :"+'\n'
+    for j,date in enumerate(send_info['overtime_date']) :
+        cannotrenew = cannotrenew + "           "+send_info['cannotrenew'][j] +" : "+date[:4]+'-'+date[4:6]+'-'+date[6:8] +'\n'
+
+
+    content ='======================\n'+hasrenew+"\n======================\n"+overtime+'\n======================\n'+cannotrenew +'\n======================\n'
+    print(content)
+
     msg = MIMEText(content)
     msg['Subject'] = subject
     msg['From'] = msg_from
@@ -102,22 +136,40 @@ def send_email(msg_address,sub,cont):
         s.quit()
 
 
-def renewal(bookinfos):
+def renewal(bookinfos,session):
+    """
+    这是自动续借的
+    :param bookinfos:
+    :param session:
+    :return:
+    """
     if(bookinfos is not None):
+     send_info ={'overtime':[],'cannotrenew':[],'overtime_date':[],'has_renew':[]}
      for i in bookinfos:
-        print(i)
+        #print(i)
         if(i['state']=='超过期限'):
-            send_email()
+            send_info['overtime'].append(i['Title'])   #加入过期列表
 
         elif(calculatetime(i['Date'])): #如果快过期了
             if(i['canrenew']==0):  #如果不能续借了
-                send_email()
+                send_info['cannotrenew'].append(i['Title'])
+                send_info['overtime_date'].append(i['Date'])
             else:                 #自动续借
-                pass
+                renewal_url = 'https://api.xiyoumobile.com/xiyoulibv2/user/renew?session='+session+'%20Path=/opac_two&barcode='+str(i['barcode'])+'&department_id='+str(i['department_id'])+'&library_id='+str(i['Library_id'])
+                send_info['has_renew'].append(i['Title'])
+                #print(renewal_url)
 
+
+
+    print(send_info)
+    return send_info
 
 if __name__ == '__main__':
-    # session = getsession(user,pwd)
-    # bookinfos = getbookinfo(session)
-    # renewal(bookinfos)
-    send_email()
+    user = '05166115'
+    pwd = '166115'
+    email = "674860268@qq.com"
+    session = getsession(user,pwd)
+    bookinfos = getbookinfo(session)
+    send_info=renewal(bookinfos,session)
+    send_email(email,send_info)
+

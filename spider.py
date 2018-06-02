@@ -81,7 +81,7 @@ def calculatetime(time):
         return False
     if(month-now_month>=1):
         return False
-    if(day-now_day<=30):
+    if(day-now_day<=3):      #距离过期还有多久
         return True
     else:return False
 
@@ -161,7 +161,8 @@ def renewal(bookinfos,session):
 
 
 
-    print(send_info)
+    #print(send_info)
+
     return send_info
 
 if __name__ == '__main__':
@@ -171,5 +172,8 @@ if __name__ == '__main__':
     session = getsession(user,pwd)
     bookinfos = getbookinfo(session)
     send_info=renewal(bookinfos,session)
-    send_email(email,send_info)
+    print(send_info)
+
+    if(len(send_info['overtime_date'])>0 or (len(send_info['has_renew'])>0)  or len(send_info['cannotrenew'])>0):
+         send_email(email,send_info)
 

@@ -9,12 +9,14 @@ def insert(user,pwd,email):
     :return:
     """
     try:
-        conn = MySQLdb.connect('localhost','root','admin','book_renew')
+        conn = MySQLdb.connect('localhost','root','wqnmlgb86889587','book_renew')
         cursor = conn.cursor()
         whther_exist_sql = "select * from subscribers where user=%s "%(user)
         cursor.execute(whther_exist_sql)
-        if(cursor.fetchone()):
-            print("这个用户已经存在")
+        exist = cursor.fetchone()
+        if(exist):
+            print(exist)
+            return 0 #该用户已经存在
 
         else:
 
@@ -27,6 +29,7 @@ def insert(user,pwd,email):
     finally:
         conn.close()
 
+    return 1    #成功订阅
 
 
 
@@ -37,7 +40,7 @@ def select(id):
     select_sql="select * FROM subscribers where id=%s" %id
     cursor.execute(select_sql)
     data =cursor.fetchall()
-    print(data)
+    #print(data)
     return data
 
 
@@ -58,6 +61,7 @@ def delet_user(user,pwd):
 
     finally:
         conn.close()
+
 def get_count():
     """
     这个是获取数据库中所有的条数的

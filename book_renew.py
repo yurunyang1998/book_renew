@@ -1,20 +1,55 @@
-from flask import Flask
-from flask import  request
+from flask import Flask,render_template
+from flask import  request,redirect,url_for
+
+from  spider import getsession
+from   link_databs import  insert,delet_user
 app = Flask(__name__,static_url_path='')
 
 
 @app.route('/',methods=['GET'])
 def index():
-    return app.send_static_file(filename='yuRunYang/html/sign.html')
+     return app.send_static_file(filename='yuRunYang/html/sign.html')
 
-@app.route('/book_renew',methods=['GET','POST'])
+
+
+@app.route('/subscribe',methods=['POST'])
 def get_message():
-    user = request.form(['name'])
-    pwd = request.form(['password'])
-    email = request.form(['email'])
+    user = request.form['name']
+    pwd = request.form['password']
+    email = request.form['email']
 
-    print(user)
-    return user
+    session = getsession(user,pwd)
+    if(session=='ACCOUNT_ERROR'):
+        return "</p> 账号或密码错误"   # 账号或密码错误
+
+    result = insert(user,pwd,email)
+    if(result==1):
+        return "</p>订阅成功"
+    else:
+        return '</p>该用户已经存在'
+
+@app.route('/login',methods=['GET'])
+def login():
+    #return  "srtasdf"
+    return app.send_static_file(filename='yuRunYang/html/login.html')
+
+
+@app.route('/sign.html',methods=['GET'])
+def index2():
+    return redirect(url_for('index'))
+
+
+# @app.route('/login.html',methods=['POST'])
+# def delete_user():
+#     user =  request.form['user']
+#     pwd = request.form['pwd']
+#
+#
+#     #delet_user(user,pwd)
+#
+#
+
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
+

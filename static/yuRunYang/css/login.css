@@ -8,8 +8,13 @@
 		#sign{
 			display: block;
 			margin:1rem 1rem 0 0;
-			color:#26A69A;
+			color:#2962FF;
 			float:left;
+			postion:absolute;
+			left:50%;
+			top:50%;
+			margin-left:300px;
+			margin-top:100px;
 		}
 		#cancel{
 			display: block;
@@ -18,7 +23,7 @@
 			float:right;
 		}
 		#loginBtn{
-			position: absolute; bottom:1rem; left:10%;
+			/*position: absolute; bottom:1rem; left:10%;*/
 			width:80%;
 			height:2rem;
 			line-height: 2rem;

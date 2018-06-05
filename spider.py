@@ -27,7 +27,7 @@ def getsession(user,pwd):
 
     #print(session_dic['Detail'])
     session = session_dic['Detail'].split()[0]
-
+    #print(session)
     return session    #获取到了session
 
 

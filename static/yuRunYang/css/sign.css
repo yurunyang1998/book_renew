@@ -5,10 +5,15 @@
 			border-radius: 1rem;
 			color:white;
 		}
-		#loginBtn{
-			position: absolute; bottom:0rem; left:10%;
-			width:80%;
+		.loginBtn{
+			display: block;
+			margin:1rem auto;
+			width:60%;
 			height:2rem;
 			line-height: 2rem;
-			margin: 0 auto;
+
 		}
+		#cancel{
+			width:45% !important;
+		}
+

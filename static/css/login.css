@@ -1,0 +1,26 @@
+#login{
+			position: relative; top:6rem;
+			width:17.5rem;
+			height:18rem;
+			border-radius: 1rem;
+			color:white;
+		}
+		#sign{
+			display: block;
+			margin:1rem 1rem 0 0;
+			color:#26A69A;
+			float:left;
+		}
+		#cancel{
+			display: block;
+			margin:1rem 1rem 0 0;
+			color:#26A69A;
+			float:right;
+		}
+		#loginBtn{
+			position: absolute; bottom:1rem; left:10%;
+			width:80%;
+			height:2rem;
+			line-height: 2rem;
+			margin: 0 auto;
+		}

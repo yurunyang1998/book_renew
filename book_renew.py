@@ -34,20 +34,18 @@ def login():
     return app.send_static_file(filename='yuRunYang/html/login.html')
 
 
+
+@app.route('/login',methods=['POST'])
+def delete_user():
+    user = request.form['user']
+    pwd = request.form['pwd']
+    result = delet_user(user,pwd)
+    return result
+
 @app.route('/sign.html',methods=['GET'])
 def index2():
     return redirect(url_for('index'))
 
-
-# @app.route('/login.html',methods=['POST'])
-# def delete_user():
-#     user =  request.form['user']
-#     pwd = request.form['pwd']
-#
-#
-#     #delet_user(user,pwd)
-#
-#
 
 
 if __name__ == '__main__':

@@ -54,13 +54,17 @@ def delet_user(user,pwd):
         delete_sql = "delete  from subscribers where user=%s and pwd=%s"%(user,pwd)
         cursor.execute(delete_sql)
         conn.commit()
-        print("你的账号已经成功删除")
+        result = "你的账号已经成功删除"
     except:
-        print("删除失败")
+        result = "删除失败"
         conn.rollback()
 
     finally:
         conn.close()
+
+    return result
+
+
 
 def get_count():
     """
